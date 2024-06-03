@@ -66,8 +66,22 @@ describe 'CardDeck' do
     end
   end
 
+  describe "#tie?" do
+    let(:deck) { CardDeck.new }
+    it 'returns true when both cards are the same rank' do
+      card1 = PlayingCard.new("A", "H")
+      card2 = PlayingCard.new("A", "H")
+      expect(deck.tie?(card1,card2)).to be true
+    end
+    it 'returns false when the cards are not the same rank' do
+      card1 = PlayingCard.new("K", "H")
+      card2 = PlayingCard.new("A", "H")
+      expect(deck.tie?(card1,card2)).to be false
+    end
+  end
+
   describe "#player1_wins?" do
-  let(:deck) { CardDeck.new }
+    let(:deck) { CardDeck.new }
     it 'returns true when player one has the higher card' do
       card1 = PlayingCard.new("A", "H")
       card2 = PlayingCard.new("4", "H")

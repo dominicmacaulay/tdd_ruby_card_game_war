@@ -1,6 +1,6 @@
 require_relative 'playing_card'
 class CardDeck
-  attr_reader :cards
+  attr_accessor :cards
 
   RANKS = %w( 2 3 4 5 6 7 8 9 10 J Q K A )
   SUITS = %w( S C H D)
@@ -18,15 +18,15 @@ class CardDeck
   end
 
   def cards_left
-    @cards.count
+    cards.count
   end
 
   def deal
-    @cards.shift
+    cards.shift
   end
 
   def shuffle
-    @cards.shuffle!
+    cards.shuffle!
   end
 
   def no_cards?
@@ -35,6 +35,10 @@ class CardDeck
 
   def get_index(rank)
     RANKS.index(rank)
+  end
+
+  def tie?(card1, card2)
+    card1.rank == card2.rank
   end
 
   def player1_wins?(card1, card2)

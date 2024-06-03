@@ -6,6 +6,6 @@ class PlayingCard
     end
 
     def ==(other_card)
-        other_card.rank == @rank && other_card.suit == @suit
+        other_card.rank == rank && other_card.suit == suit
     end
 end 

@@ -44,18 +44,53 @@ describe 'WarGame' do
             card2 = PlayingCard.new("A", "H")
             game.player1.add_cards(card1)
             game.player2.add_cards(card2)
-            game.play_round
+            test = game.play_round
             expect(game.player1.hand).to be_empty
             expect(game.player2.hand).to include(card1, card2)
+            expect(test).to eql("Player 2 took K of S, and A of H")
         end
         it 'should add the cards to player 1' do
             card1 = PlayingCard.new("2", "S")
             card2 = PlayingCard.new("A", "H")
             game.player1.add_cards(card2)
             game.player2.add_cards(card1)
-            game.play_round
+            test = game.play_round
             expect(game.player2.hand).to be_empty
             expect(game.player1.hand).to include(card1, card2)
+            expect(test).to eql("Player 1 took A of H, and 2 of S")
+        end
+        it 'should add cards to player 1 even after a tie' do
+            card1 = PlayingCard.new("A", "S")
+            card2 = PlayingCard.new("A", "H")
+            card3 = PlayingCard.new("2", "S")
+            card4 = PlayingCard.new("A", "D")
+            game.player1.add_cards([card2,card4])
+            game.player2.add_cards([card1,card3])
+            test = game.play_round
+            expect(game.player2.hand).to be_empty
+            expect(game.player1.hand).to include(card1, card2, card3, card4)
+            expect(test).to eql("Player 1 took A of H, A of S, A of D, and 2 of S")
+        end
+    end
+
+    describe "#game_feedback" do
+        it 'should return a proper string' do
+            game = WarGame.new
+            card1 = PlayingCard.new("K", "S")
+            card2 = PlayingCard.new("A", "H")
+            pile = [card1,card2]
+            expect(game.match_feedback(game.player1, pile)).to eql("Player 1 took K of S, and A of H")
+        end
+    end
+
+    describe "#check_for winner" do
+        let(:game) { WarGame.new }
+        it 'should make the winner player1 when player 1 wins' do
+            card1 = PlayingCard.new("A", "S")
+            card2 = PlayingCard.new("A", "H")
+            game.player1.add_cards([card1,card2])
+            game.check_for_winner
+            expect(game.winner).to eql(game.player1)
         end
     end
 end
