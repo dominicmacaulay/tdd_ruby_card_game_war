@@ -40,8 +40,8 @@ class CardDeck
     cards.shift
   end
 
-  def shuffle
-    cards.shuffle!
+  def shuffle(seed = Random.new)
+    cards.shuffle!(random: seed)
   end
 
   def no_cards?

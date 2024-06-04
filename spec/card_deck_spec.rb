@@ -37,7 +37,7 @@ describe 'CardDeck' do
   describe "#shuffle" do
     it 'should shuffle the deck' do
       deck = CardDeck.new([1,2,3])
-      expect(deck.shuffle).not_to eql [1,2,3]
+      expect(deck.shuffle(1)).not_to eql [1,2,3]
     end
   end
 
