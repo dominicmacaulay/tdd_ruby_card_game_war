@@ -12,6 +12,7 @@ class Player
     end
 
     def add_cards(cards)
+        cards.shuffle!
         hand.push(*cards)
     end
 

@@ -6,15 +6,15 @@ class WarGame
     def initialize
         @player1 = Player.new("Player 1")
         @player2 = Player.new("Player 2")
-        @deck = CardDeck.new
+        @deck = CardDeck.new()
         @winner = nil
     end
 
     def start
         deck.shuffle
         until deck.no_cards?
-            player1.add_cards(deck.deal)
-            player2.add_cards(deck.deal)
+            player1.add_cards([deck.deal])
+            player2.add_cards([deck.deal])
         end
     end
 

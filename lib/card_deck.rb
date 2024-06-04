@@ -6,7 +6,22 @@ class CardDeck
   SUITS = %w( S C H D)
 
   def initialize(cards = make_deck)
-    @cards = cards
+    if cards == "test"
+      @cards = make_test_deck
+    else
+      @cards = cards
+    end
+  end
+
+  def make_test_deck
+    x = 2
+    cards = []
+    until x > 8
+      cards.push(PlayingCard.new("#{x}", "H"))
+      cards.push(PlayingCard.new("#{x}", "S"))
+      x += 1
+    end
+    cards
   end
 
   def make_deck

@@ -42,34 +42,36 @@ describe 'WarGame' do
         it 'should add the cards to player 2' do
             card1 = PlayingCard.new("K", "S")
             card2 = PlayingCard.new("A", "H")
-            game.player1.add_cards(card1)
-            game.player2.add_cards(card2)
-            test = game.play_round
+            game.player1.add_cards([card1])
+            game.player2.add_cards([card2])
+            result = game.play_round
             expect(game.player1.hand).to be_empty
             expect(game.player2.hand).to include(card1, card2)
-            expect(test).to eql("Player 2 took K of S, and A of H")
+            expect(result).to include("Player 2 took ","A of H",", and ","K of S")
         end
         it 'should add the cards to player 1' do
             card1 = PlayingCard.new("2", "S")
             card2 = PlayingCard.new("A", "H")
-            game.player1.add_cards(card2)
-            game.player2.add_cards(card1)
-            test = game.play_round
+            game.player1.add_cards([card2])
+            game.player2.add_cards([card1])
+            result = game.play_round
             expect(game.player2.hand).to be_empty
             expect(game.player1.hand).to include(card1, card2)
-            expect(test).to eql("Player 1 took A of H, and 2 of S")
+            expect(result).to include("Player 1 took","A of H",", and ","2 of S")
         end
         it 'should add cards to player 1 even after a tie' do
             card1 = PlayingCard.new("A", "S")
             card2 = PlayingCard.new("A", "H")
             card3 = PlayingCard.new("2", "S")
             card4 = PlayingCard.new("A", "D")
-            game.player1.add_cards([card2,card4])
-            game.player2.add_cards([card1,card3])
-            test = game.play_round
+            game.player1.add_cards([card2])
+            game.player1.add_cards([card4])
+            game.player2.add_cards([card1])
+            game.player2.add_cards([card3])
+            result = game.play_round
             expect(game.player2.hand).to be_empty
             expect(game.player1.hand).to include(card1, card2, card3, card4)
-            expect(test).to eql("Player 1 took A of H, A of S, A of D, and 2 of S")
+            expect(result).to include("Player 1 took ","A of H",", ","A of S",", ","A of D",", and ","2 of S")
         end
     end
 

@@ -18,7 +18,7 @@ describe 'WarPlayer' do
     describe "#add_cards" do
         it 'adds a card to the hand' do
             player = Player.new('x')
-            player.add_cards(1)
+            player.add_cards([1])
             expect(player.hand.include?(1)).to be true
         end
         it 'adds multiple cards to the hand' do
