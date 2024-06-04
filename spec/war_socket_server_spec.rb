@@ -1,5 +1,6 @@
 require 'socket'
 require_relative '../lib/war_socket_server'
+require_relative '../lib/war_game'
 
 class MockWarSocketClient
   attr_reader :socket
@@ -59,7 +60,7 @@ describe WarSocketServer do
   end
 
   describe "#create_game_if_possible" do
-    it "astarts a game only if there are enough players" do
+    it "starts a game only if there are enough players" do
       client1 = MockWarSocketClient.new(@server.port_number)
       @clients.push(client1)
       @server.accept_new_client("Player 1")
@@ -70,6 +71,16 @@ describe WarSocketServer do
       @server.accept_new_client("Player 2")
       @server.create_game_if_possible
       expect(@server.games.count).to be 1
+    end
+    
+    it "returns a WarGame object if there are enough players" do
+      MockWarSocketClient.new(@server.port_number)
+      @server.accept_new_client("Player 1")
+      MockWarSocketClient.new(@server.port_number)
+      @server.accept_new_client("Player 2")
+      game = @server.create_game_if_possible
+      expect(game).to be_a(WarGame)
+
     end
 
     it "sends the client a pending message when there are not enough players yet" do
