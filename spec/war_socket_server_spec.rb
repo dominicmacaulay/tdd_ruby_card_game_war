@@ -29,6 +29,8 @@ describe WarSocketServer do
   before(:each) do
     @clients = []
     @server = WarSocketServer.new
+    @server.start
+    sleep(0.1)
   end
 
   after(:each) do
@@ -39,24 +41,58 @@ describe WarSocketServer do
   end
 
   it "is not listening on a port before it is started"  do
+    @server.stop
     expect {MockWarSocketClient.new(@server.port_number)}.to raise_error(Errno::ECONNREFUSED)
   end
 
-  it "accepts new clients and starts a game if possible" do
-    @server.start
-    sleep(0.1)
-    client1 = MockWarSocketClient.new(@server.port_number)
-    @clients.push(client1)
-    @server.accept_new_client("Player 1")
-    @server.create_game_if_possible
-    expect(@server.games.count).to be 0
-    client2 = MockWarSocketClient.new(@server.port_number)
-    @clients.push(client2)
-    @server.accept_new_client("Player 2")
-    @server.create_game_if_possible
-    expect(@server.games.count).to be 1
+  describe "#accept_new_client" do
+    it "accepts new clients into the pending and full client lists" do
+      client1 = MockWarSocketClient.new(@server.port_number)
+      @clients.push(client1)
+      @server.accept_new_client("Player 1")
+      client2 = MockWarSocketClient.new(@server.port_number)
+      @clients.push(client2)
+      @server.accept_new_client("Player 2")
+      expect(@server.pending_clients.length).to be @clients.length
+      expect(@server.clients.length).to be @clients.length
+    end
   end
 
+  describe "#create_game_if_possible" do
+    it "astarts a game only if there are enough players" do
+      client1 = MockWarSocketClient.new(@server.port_number)
+      @clients.push(client1)
+      @server.accept_new_client("Player 1")
+      @server.create_game_if_possible
+      expect(@server.games.count).to be 0
+      client2 = MockWarSocketClient.new(@server.port_number)
+      @clients.push(client2)
+      @server.accept_new_client("Player 2")
+      @server.create_game_if_possible
+      expect(@server.games.count).to be 1
+    end
+
+    it "sends the client a pending message when there are not enough players yet" do
+      client1 = MockWarSocketClient.new(@server.port_number)
+      @clients.push(client1)
+      @server.accept_new_client("Player 1")
+      @server.create_game_if_possible
+      expect(client1.capture_output.chomp).to eq("Waiting for other player(s) to join")
+    end
+  end
+
+  describe "#run_game" do
+    xit "sends the client a pending message when the other player(s) haven't agreed to play a round" do
+      client1 = MockWarSocketClient.new(@server.port_number)
+      @clients.push(client1)
+      @server.accept_new_client("Player 1")
+      client2 = MockWarSocketClient.new(@server.port_number)
+      @clients.push(client2)
+      @server.accept_new_client("Player 2")
+      game = @server.create_game_if_possible
+
+    end
+  end
   # Add more tests to make sure the game is being played
   # For example:
   #   make sure the mock client gets appropriate output

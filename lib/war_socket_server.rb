@@ -22,7 +22,6 @@ class WarSocketServer
 
   def accept_new_client(player_name = "Random Player")
     client = @server.accept_nonblock
-    # associate player and client
     self.pending_clients.push(client)
     self.clients[client] = Player.new(player_name)
   rescue IO::WaitReadable, Errno::EINTR
@@ -31,17 +30,22 @@ class WarSocketServer
 
   def create_game_if_possible
     if self.pending_clients.length >= players_per_game
-        games.push(WarGame.new(*get_players))
+      games.push(WarGame.new(*get_players))
+      return games[-1]
     end
+    pending_clients.each { |client| client.puts("Waiting for other player(s) to join") }
   end
 
   def get_players
     x = 0
     players =[]
     until x == players_per_game
-        players.push(clients[pending_clients.shift])
-        x += 1
+      players.push(clients[pending_clients.shift])
+      x += 1
     end
+  end
+
+  def run_game(game)
   end
 
   def stop
