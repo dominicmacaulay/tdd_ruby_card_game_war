@@ -21,16 +21,19 @@ class WarGame
 
     def play_round(pile = [])
         pile.push(*retrieve_cards)
-        play_round(pile) if deck.tie?(pile[-2],pile[-1])
-        deck.player1_wins?(pile[-2],pile[-1]) ? match_winner = player1 : match_winner = player2
-        check_for_winner(match_winner)
+        if deck.tie?(pile[-2],pile[-1])
+            play_round(pile) 
+        else
+            match_winner = get_winner(pile)
+            return match_feedback(match_winner, pile)
+        end
+    end
 
-        # if deck.tie?(pile[-2],pile[-1])
-        #     play_round(pile)
-        # else
-        #     check_for_winner
-        #     return match_feedback(match_winner(pile), pile)
-        # end
+    def get_winner(pile)
+        deck.player1_wins?(pile[-2],pile[-1]) ? match_winner = player1 : match_winner = player2
+        match_winner.add_cards(pile)
+        check_for_winner(match_winner)
+        return match_winner
     end
 
     def retrieve_cards
@@ -49,9 +52,9 @@ class WarGame
         return message
     end
 
-    def check_for_winner(winner)
-        if winner.hand_length == self.deck_length
-            self.winner == winner
+    def check_for_winner(match_winner, deck_length = self.deck_length)
+        if match_winner.hand_length == deck_length
+            self.winner = match_winner
         end
     end
 end

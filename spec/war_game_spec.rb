@@ -113,7 +113,7 @@ describe 'WarGame' do
             card1 = PlayingCard.new("A", "S")
             card2 = PlayingCard.new("A", "H")
             game.player1.add_cards([card1,card2])
-            game.check_for_winner
+            game.check_for_winner(game.player1, 2)
             expect(game.winner).to eql(game.player1)
         end
     end
