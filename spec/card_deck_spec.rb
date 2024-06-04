@@ -38,7 +38,7 @@ describe 'CardDeck' do
     it 'should shuffle the deck' do
       deck1 = CardDeck.new([1,2,3])
       deck2 = CardDeck.new([1,2,3])
-      deck1.shuffle(1000)
+      deck1.shuffle(Random.new(1000))
       expect(deck1.cards).not_to eql(deck2.cards)
     end
   end

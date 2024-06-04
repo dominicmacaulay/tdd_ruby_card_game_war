@@ -44,6 +44,7 @@ describe WarSocketServer do
 
   it "accepts new clients and starts a game if possible" do
     @server.start
+    sleep(0.1)
     client1 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 1")

@@ -6,7 +6,7 @@ class WarGame
     def initialize(player1 = Player.new("Player 1"), player2 = Player.new("Player 2"))
         @player1 = player1
         @player2 = player2
-        @deck = CardDeck.new()
+        @deck = CardDeck.new
         @deck_length = deck.cards_left
         @winner = nil
     end
@@ -22,24 +22,23 @@ class WarGame
     def play_round(pile = [])
         pile.push(*retrieve_cards)
         if deck.tie?(pile[-2],pile[-1])
-            play_round(pile) 
-        else
-            match_winner = get_match_winner(pile)
-            return match_feedback(match_winner, pile)
+            return play_round(pile) 
         end
+        match_winner = get_match_winner(pile)
+        match_feedback(match_winner, pile)
     end
 
     def get_match_winner(pile)
         deck.player1_wins?(pile[-2],pile[-1]) ? match_winner = player1 : match_winner = player2
         match_winner.add_cards(pile)
         check_for_winner(match_winner)
-        return match_winner
+        match_winner
     end
 
     def retrieve_cards
         card1 = player1.remove_top_card
         card2 = player2.remove_top_card
-        return [card1,card2]
+        [card1,card2]
     end
 
     def match_feedback(player, cards)

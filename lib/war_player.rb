@@ -2,10 +2,9 @@
 class Player
     attr_reader :name
     attr_accessor :hand, :client
-    def initialize(name, hand = [], client = nil)
+    def initialize(name, hand = [])
         @name = name
         @hand = hand
-        @client = client
     end
 
     def hand_length
