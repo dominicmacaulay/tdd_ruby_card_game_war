@@ -41,11 +41,9 @@ class WarGame
     def match_feedback(player, cards)
         message = "#{player.name} took "
         cards.each do |card|
-            if card == cards.last
-                message.concat("and #{card.rank} of #{card.suit}")
-            else
-                message.concat("#{card.rank} of #{card.suit}, ")
-            end
+            message.concat("and ") if card == cards.last
+            message.concat("#{card.rank} of #{card.suit}")
+            message.concat(", ") if card != cards.last
         end
         return message
     end
