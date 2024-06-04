@@ -24,12 +24,12 @@ class WarGame
         if deck.tie?(pile[-2],pile[-1])
             play_round(pile) 
         else
-            match_winner = get_winner(pile)
+            match_winner = get_match_winner(pile)
             return match_feedback(match_winner, pile)
         end
     end
 
-    def get_winner(pile)
+    def get_match_winner(pile)
         deck.player1_wins?(pile[-2],pile[-1]) ? match_winner = player1 : match_winner = player2
         match_winner.add_cards(pile)
         check_for_winner(match_winner)
