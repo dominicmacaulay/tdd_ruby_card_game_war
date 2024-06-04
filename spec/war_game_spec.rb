@@ -75,6 +75,28 @@ describe 'WarGame' do
         end
     end
 
+    describe "#retrieve_cards" do
+    let(:game) { WarGame.new }
+        it 'should return an array of two cards from each players deck' do
+            card1 = PlayingCard.new("2", "S")
+            card2 = PlayingCard.new("A", "H")
+            game.player1.add_cards([card2])
+            game.player2.add_cards([card1])
+            cards = game.retrieve_cards
+            expect(cards).to include(card1, card2)
+        end
+        it 'should return an array of specifically the top card from each players deck' do
+            card1 = PlayingCard.new("2", "S")
+            card2 = PlayingCard.new("A", "H")
+            card1 = PlayingCard.new("4", "S")
+            card2 = PlayingCard.new("7", "H")
+            game.player1.add_cards([card2])
+            game.player2.add_cards([card1])
+            cards = game.retrieve_cards
+            expect(cards).to include(card1, card2)
+        end
+    end
+
     describe "#game_feedback" do
         it 'should return a proper string' do
             game = WarGame.new

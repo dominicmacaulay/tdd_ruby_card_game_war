@@ -19,14 +19,11 @@ class WarGame
     end
 
     def play_round(pile = [])
-        card1 = player1.remove_top_card
-        card2 = player2.remove_top_card
-        pile.push(card1)
-        pile.push(card2)
-        if deck.tie?(card1,card2)
+        pile.push(*retrieve_cards)
+        if deck.tie?(pile[-2],pile[-1])
             play_round(pile)
         else
-            if deck.player1_wins?(card1,card2)
+            if deck.player1_wins?(pile[-2],pile[-1])
                 player1.add_cards(pile)
                 message = match_feedback(player1, pile)
             else
@@ -36,6 +33,12 @@ class WarGame
             check_for_winner
             return message
         end
+    end
+
+    def retrieve_cards
+        card1 = player1.remove_top_card
+        card2 = player2.remove_top_card
+        return [card1,card2]
     end
 
     def match_feedback(player, cards)
