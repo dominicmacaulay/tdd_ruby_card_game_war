@@ -93,15 +93,27 @@ describe WarSocketServer do
   end
 
   describe "#run_game" do
-    xit "sends the client a pending message when the other player(s) haven't agreed to play a round" do
-      client1 = MockWarSocketClient.new(@server.port_number)
-      @clients.push(client1)
+    it "calls #ask_ready" do
+      MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client("Player 1")
-      client2 = MockWarSocketClient.new(@server.port_number)
-      @clients.push(client2)
+      MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client("Player 2")
       game = @server.create_game_if_possible
+      expect(@server).to receive(:ask_ready)
+      @server.run_game(game)
+    end
+  end
 
+  describe "#ask_ready" do
+    it "sends the client a pending message when the other player(s) haven't agreed to play a round" do
+      client1 = MockWarSocketClient.new(@server.port_number)
+      @server.accept_new_client("Player 1")
+      client2 = MockWarSocketClient.new(@server.port_number)
+      @server.accept_new_client("Player 2")
+      game = @server.create_game_if_possible
+      @server.run_game(game)
+      expect(client1.capture_output.chomp).to eq("Are you ready to begin?")
+      expect(client2.capture_output.chomp).to eq("Are you ready to begin?")
     end
   end
   # Add more tests to make sure the game is being played
