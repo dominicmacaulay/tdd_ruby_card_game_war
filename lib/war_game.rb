@@ -1,13 +1,12 @@
 require_relative 'war_player'
 require_relative 'card_deck'
 class WarGame
-    attr_reader :player1, :player2, :deck, :deck_length
+    attr_reader :player1, :player2, :deck
     attr_accessor :winner
     def initialize(player1 = Player.new("Player 1"), player2 = Player.new("Player 2"))
         @player1 = player1
         @player2 = player2
         @deck = CardDeck.new
-        @deck_length = deck.cards_left
         @winner = nil
     end
 
@@ -20,18 +19,17 @@ class WarGame
     end
 
     def play_round(pile = [])
-        pile.push(*retrieve_cards)
-        if deck.tie?(pile[-2],pile[-1])
-            return play_round(pile) 
+        unless check_for_game_winner
+            pile.push(*retrieve_cards)
+            return play_round(pile) if deck.tie?(pile[-2],pile[-1])
+            match_winner = get_match_winner(pile)
+            match_feedback(match_winner, pile)
         end
-        match_winner = get_match_winner(pile)
-        match_feedback(match_winner, pile)
     end
 
     def get_match_winner(pile)
         deck.player1_wins?(pile[-2],pile[-1]) ? match_winner = player1 : match_winner = player2
         match_winner.add_cards(pile)
-        check_for_winner(match_winner)
         match_winner
     end
 
@@ -51,9 +49,13 @@ class WarGame
         return message
     end
 
-    def check_for_winner(match_winner, deck_length = self.deck_length)
-        if match_winner.hand_length == deck_length
-            self.winner = match_winner
+    def check_for_game_winner
+        if player1.hand_length == 0
+            self.winner = player2
+        elsif player2.hand_length == 0
+            self.winner = player1
+        else
+            false
         end
     end
 end

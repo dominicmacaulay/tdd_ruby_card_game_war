@@ -97,7 +97,7 @@ describe 'WarGame' do
         end
     end
 
-    describe "#get_winner" do
+    describe "#get_match_winner" do
         let(:game) { WarGame.new }
         it 'evaluates the cards and returns the player who won' do
             card1 = PlayingCard.new("A", "H")
@@ -113,13 +113,6 @@ describe 'WarGame' do
             game.get_match_winner(pile)
             expect(game.player1.hand).to include(card1, card2)
         end
-        it 'calls the check for winner method' do
-            card1 = PlayingCard.new("A", "H")
-            card2 = PlayingCard.new("2", "S")
-            pile = [card1, card2]
-            expect(game).to receive(:check_for_winner)
-            game.get_match_winner(pile)
-        end
     end
 
     describe "#game_feedback" do
@@ -132,13 +125,13 @@ describe 'WarGame' do
         end
     end
 
-    describe "#check_for winner" do
+    describe "#check_for_game_winner" do
         let(:game) { WarGame.new }
         it 'should make the winner player1 when player 1 wins' do
             card1 = PlayingCard.new("A", "S")
             card2 = PlayingCard.new("A", "H")
             game.player1.add_cards([card1,card2])
-            game.check_for_winner(game.player1, 2)
+            game.check_for_game_winner
             expect(game.winner).to eql(game.player1)
         end
     end
