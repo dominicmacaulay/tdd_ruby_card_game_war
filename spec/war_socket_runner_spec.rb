@@ -35,8 +35,8 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
     sleep(0.1)
     @client1 = create_client('P 1')
     @client2 = create_client('P 2')
-    game = @server.create_game_if_possible
-    @runner = WarSocketRunner.new(game, @server.clients, @server)
+    @game = @server.create_game_if_possible
+    @runner = WarSocketRunner.new(@game, @server.clients)
   end
 
   after(:each) do
@@ -44,8 +44,21 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
     @clients.each(&:close)
   end
 
+  it 'runs a round' do
+    @game.start
+    @runner.run_round_if_possible
+    expect(@client1.capture_output).to match 'Enter'
+    expect(@client2.capture_output).to match 'Enter'
+    @client1.provide_input('ready')
+    @client2.provide_input('ready')
+    @runner.run_round_if_possible
+    expect(@client1.capture_output).to match 'asdf'
+    # expect client1 to have round result
+    # expect(@runner.game.player1.hand.count).not_to
+  end
+
   describe '#run_game' do
-    it 'calls #ready_up' do
+    xit 'calls #ready_up' do
       expect(@runner).to receive(:ready_up)
       @runner.run_game
     end

@@ -6,11 +6,13 @@ require_relative 'war_game'
 # runs the game on a server
 class WarSocketRunner
   attr_reader :game, :clients, :server
+  attr_accessor :are_players_prompted, :pending_players
 
-  def initialize(game, clients, server)
+  def initialize(game, clients)
     @game = game
     @clients = clients
-    @server = server
+    @are_players_prompted = false
+    @pending_players = store_pending_players
   end
 
   def start
@@ -19,40 +21,62 @@ class WarSocketRunner
 
   def run_game
     until game.winner
-      ready_up
-      match_result = game.play_round
-      send_feedback(match_result)
+      prompt_players if are_players_prompted == false
+      run_round_if_possible
     end
     send_feedback("Winner is #{game.winner.name}")
   end
 
+  def run_round_if_possible
+    return unless ready_up
+
+    match_result = game.play_round
+    send_feedback(match_result)
+    self.are_players_prompted = false
+    self.pending_players = store_pending_players
+  end
+
   def send_feedback(message)
-    clients.each { |client| server.provide_input(client.first, message) }
+    clients.each { |client| send_message_to_client(client.first, message) }
   end
 
   def ready_up
-    # TODO: check if there is a way to shorten this
-    pending_players = prompt_to_ready_and_store_players
-    until pending_players.empty?
-      pending_players.each do |client|
-        pending_players.delete(client) if confirm_ready(client)
-      end
+    pending_players.each do |client|
+      pending_players.delete(client) if confirm_ready(client)
     end
+    pending_players.empty?
   end
 
-  def prompt_to_ready_and_store_players
-    pending_players = []
+  def store_pending_players
+    players = []
     game.players.each do |player|
-      server.provide_input(clients.key(player), "Are you ready to play? Enter 'ready' if so.")
-      pending_players.push(clients.key(player))
+      players.push(clients.key(player))
     end
-    pending_players
+    players
+  end
+
+  def prompt_players
+    game.players.each do |player|
+      send_message_to_client(clients.key(player), "Are you ready to play? Enter 'ready' if so.")
+    end
+    self.are_players_prompted = true
   end
 
   def confirm_ready(client)
-    return false unless server.capture_output(client) == 'ready'
+    return false unless retreive_message_from_player(client) == 'ready'
 
-    server.provide_input(client, 'Waiting for other players to ready')
+    send_message_to_client(client, 'Waiting for other players to ready')
     true
+  end
+
+  def send_message_to_client(client, text)
+    client.puts(text)
+  end
+
+  def retreive_message_from_player(client, delay = 0.1)
+    sleep(delay)
+    client.read_nonblock(1000).chomp.downcase # not gets which blocks
+  rescue IO::WaitReadable
+    ''
   end
 end
