@@ -93,36 +93,38 @@ describe WarSocketServer do
   end
 
   describe "#run_game" do
-    it "calls #ask_ready" do
+    it "calls #ready_up" do
       MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client("Player 1")
       MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client("Player 2")
       game = @server.create_game_if_possible
-      expect(@server).to receive(:ask_ready)
+      expect(@server).to receive(:ready_up)
       @server.run_game(game)
     end
   end
 
-  describe "#ask_ready" do
+  describe "#ready_up" do
     it "Ask each player if they are ready" do
       client1 = MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client("P 1")
       client2 = MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client("P 2")
       game = @server.create_game_if_possible
-      @server.ask_ready(game)
+      @server.ready_up(game)
       expect(client1.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
       expect(client2.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
     end
   end
 
   describe "#capture_output" do
-    it "receives the client's input" do
+    it "receives the downcased client's input" do
       client1 = MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client("P 1")
       client1.provide_input("Hello")
-      expect(@server.capture_output(@server.pending_clients[0]).chomp).to eq("Hello")
+      expect(@server.capture_output(@server.pending_clients[0]).chomp).to eq("hello")
+      client1.provide_input("reaDy")
+      expect(@server.capture_output(@server.pending_clients[0]).chomp).to eq("ready")
     end
   end
   # Add more tests to make sure the game is being played

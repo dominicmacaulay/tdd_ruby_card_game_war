@@ -58,7 +58,7 @@ class WarSocketServer
 
   def capture_output(client, delay=0.1)
     sleep(delay)
-    output = client.read_nonblock(1000) # not gets which blocks
+    output = client.read_nonblock(1000).downcase # not gets which blocks
   rescue IO::WaitReadable
     output = ""
   end
