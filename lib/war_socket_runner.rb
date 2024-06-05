@@ -25,7 +25,7 @@ class WarSocketRunner
     pending_players = prompt_to_ready_and_store_players
     until pending_players.empty?
       pending_players.each do |client|
-        pending_players.remove(client) if confirm_ready(client)
+        pending_players.delete(client) if confirm_ready(client)
       end
     end
   end

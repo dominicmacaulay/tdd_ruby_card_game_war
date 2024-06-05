@@ -52,6 +52,12 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
   end
 
   describe '#ready_up' do
+    it 'calls the confirm_ready method until all players say yes' do
+      allow(@runner).to receive(:prompt_to_ready_and_store_players).and_return(@runner.clients.keys)
+      allow(@runner).to receive(:confirm_ready).and_return(false, false, true, true)
+      expect(@runner).to receive(:confirm_ready).at_least(@clients.length * 2).times
+      @runner.ready_up
+    end
   end
 
   describe '#prompt_to_ready_and_store_players' do
