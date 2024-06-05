@@ -59,12 +59,11 @@ class WarGame
   end
 
   def check_for_game_winner
-    if player1.hand_length.zero?
-      self.winner = player2
-    elsif player2.hand_length.zero?
-      self.winner = player1
-    else
-      false
-    end
+    num_of_losers = players.count { |player| player.hand_length.zero? }
+    return unless num_of_losers == players.count - 1
+
+    winner = nil
+    players.each { |player| winner = player if player.hand_length.positive? }
+    self.winner = winner
   end
 end
