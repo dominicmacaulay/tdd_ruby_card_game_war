@@ -84,17 +84,12 @@ describe 'CardDeck' do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  describe '#player1_wins?' do
+  describe '#winning_card' do
     let(:deck) { CardDeck.new }
-    it 'returns true when player one has the higher card' do
+    it 'returns the card with the highest value' do
       card1 = PlayingCard.new('A', 'H')
       card2 = PlayingCard.new('4', 'H')
-      expect(deck.player1_wins?(card1,card2)).to be true
-    end
-    it 'returns false when player two has the higher card' do
-      card1 = PlayingCard.new('4', 'H')
-      card2 = PlayingCard.new('A', 'H')
-      expect(deck.player1_wins?(card1,card2)).to be false
+      expect(deck.winning_card([card1, card2])).to eql(card1)
     end
   end
 end

@@ -61,7 +61,11 @@ class CardDeck
     false
   end
 
-  def player1_wins?(card1, card2)
-    get_index(card1.rank) > get_index(card2.rank)
+  def winning_card(cards)
+    highest_card = nil
+    cards.each do |card|
+      highest_card = card if highest_card.nil? || get_index(card.rank) > get_index(highest_card&.rank)
+    end
+    highest_card
   end
 end

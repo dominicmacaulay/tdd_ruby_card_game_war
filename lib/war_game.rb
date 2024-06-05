@@ -34,10 +34,12 @@ class WarGame
     match_feedback(match_winner, pile)
   end
 
+  # TODO: rewrite to get the card's player
   def get_match_winner(pile)
-    match_winner = deck.player1_wins?(pile[-2], pile[-1]) ? player1 : player2
-    match_winner.add_cards(pile)
-    match_winner
+    # match_winner = deck.winning_card(pile[-2], pile[-1]) ? player1 : player2
+    # match_winner.add_cards(pile)
+    # match_winner
+    winning_card = deck.winning_card(pile.last(players.length))
   end
 
   def retrieve_cards
