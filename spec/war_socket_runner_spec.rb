@@ -47,7 +47,7 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
   describe '#run_game' do
     it 'calls #ready_up' do
       expect(@runner).to receive(:ready_up)
-      @runner.run_game(@runner.game)
+      @runner.run_game
     end
   end
 
@@ -56,7 +56,7 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
 
   describe '#prompt_to_ready_and_store_players' do
     it 'Ask each player if they are ready' do
-      @runner.prompt_to_ready_and_store_players(@runner.game)
+      @runner.prompt_to_ready_and_store_players
       expect(@client1.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
       expect(@client2.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
     end

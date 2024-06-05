@@ -13,16 +13,16 @@ class WarSocketRunner
   end
 
   def start
-    run_game(game)
+    run_game
   end
 
-  def run_game(game)
-    ready_up(game)
+  def run_game
+    ready_up
   end
 
-  def ready_up(game)
+  def ready_up
     # TODO: check if there is a way to shorten this
-    pending_players = prompt_to_ready_and_store_players(game)
+    pending_players = prompt_to_ready_and_store_players
     until pending_players.empty?
       pending_players.each do |client|
         pending_players.remove(client) if confirm_ready(client)
@@ -30,9 +30,9 @@ class WarSocketRunner
     end
   end
 
-  def prompt_to_ready_and_store_players(game)
+  def prompt_to_ready_and_store_players
     pending_players = []
-    self.game.players.each do |player|
+    game.players.each do |player|
       clients.key(player).puts("Are you ready to play? Enter 'ready' if so.")
       pending_players.push(clients.key(player))
     end
