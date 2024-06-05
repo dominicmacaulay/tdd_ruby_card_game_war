@@ -68,8 +68,7 @@ describe WarSocketServer do # rubocop:disable Metrics/BlockLength
       MockWarSocketClient.new(@server.port_number)
       @server.accept_new_client('Player 2')
       game = @server.create_game_if_possible
-      expect(game).to respond_to() 
-      # expect respond to
+      expect(game).to respond_to(:start)
     end
 
     it 'sends the client a pending message when there are not enough players yet' do

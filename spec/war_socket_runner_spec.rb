@@ -36,7 +36,7 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
     @client1 = create_client('P 1')
     @client2 = create_client('P 2')
     game = @server.create_game_if_possible
-    @runner = WarSocketRunner.new(game, @server.clients)
+    @runner = WarSocketRunner.new(game, @server.clients, @server)
   end
 
   after(:each) do
@@ -65,6 +65,27 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
       @runner.prompt_to_ready_and_store_players
       expect(@client1.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
       expect(@client2.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
+    end
+  end
+
+  describe '#confirm_ready' do
+    it 'returns true and give pending message when the client sends ready' do
+      client = @runner.clients.keys.first
+      @client1.provide_input('ready')
+      confirmation = @runner.confirm_ready(client)
+      expect(confirmation).to be true
+      expect(@client1.capture_output).to eq('Waiting for other players to ready')
+    end
+    it 'returns false if the client does not send ready' do
+      client = @runner.clients.keys.first
+      @client1.provide_input('nah')
+      confirmation = @runner.confirm_ready(client)
+      expect(confirmation).to be false
+    end
+    it 'returns false if the client does not send anything' do
+      client = @runner.clients.keys.first
+      confirmation = @runner.confirm_ready(client)
+      expect(confirmation).to be false
     end
   end
   def create_client(name)

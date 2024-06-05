@@ -5,11 +5,12 @@ require_relative 'war_game'
 
 # runs the game on a server
 class WarSocketRunner
-  attr_reader :game, :clients
+  attr_reader :game, :clients, :server
 
-  def initialize(game, clients)
+  def initialize(game, clients, server)
     @game = game
     @clients = clients
+    @server = server
   end
 
   def start
@@ -40,7 +41,7 @@ class WarSocketRunner
   end
 
   def confirm_ready(client)
-    return false unless capture_output(client) == 'ready'
+    return false unless server.capture_output(client) == 'ready'
 
     client.puts('Waiting for other players to ready')
     true
