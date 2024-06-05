@@ -79,32 +79,6 @@ describe WarSocketServer do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  describe '#run_game' do
-    it 'calls #ready_up' do
-      MockWarSocketClient.new(@server.port_number)
-      @server.accept_new_client('Player 1')
-      MockWarSocketClient.new(@server.port_number)
-      @server.accept_new_client('Player 2')
-      game = @server.create_game_if_possible
-      expect(@server).to receive(:ready_up)
-      @server.run_game(game)
-    end
-  end
-
-  describe '#ready_up' do
-  end
-
-  describe '#prompt_to_ready_and_store_players' do
-    it 'Ask each player if they are ready' do
-      client1 = create_client('P 1')
-      client2 = create_client('P 2')
-      game = @server.create_game_if_possible
-      @server.prompt_to_ready_and_store_players(game)
-      expect(client1.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
-      expect(client2.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
-    end
-  end
-
   describe '#capture_output' do
     it "receives the downcased client's input" do
       client1 = create_client('P 1')

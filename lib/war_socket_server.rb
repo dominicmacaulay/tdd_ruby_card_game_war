@@ -46,36 +46,6 @@ class WarSocketServer
     end
   end
 
-  def run_game(game)
-    ready_up(game)
-  end
-
-  def ready_up(game)
-    # TODO: check if there is a way to shorten this
-    pending_players = prompt_to_ready_and_store_players(game)
-    until pending_players.empty?
-      pending_players.each do |client|
-        pending_players.remove(client) if confirm_ready(client)
-      end
-    end
-  end
-
-  def prompt_to_ready_and_store_players(game)
-    pending_players = []
-    game.players.each do |player|
-      clients.key(player).puts("Are you ready to play? Enter 'ready' if so.")
-      pending_players.push(clients.key(player))
-    end
-    pending_players
-  end
-
-  def confirm_ready(client)
-    return false unless capture_output(client) == 'ready'
-
-    client.puts('Waiting for other players to ready')
-    true
-  end
-
   def capture_output(client, delay = 0.1)
     sleep(delay)
     output = client.read_nonblock(1000).chomp.downcase # not gets which blocks
