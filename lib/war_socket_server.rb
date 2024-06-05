@@ -38,21 +38,29 @@ class WarSocketServer
   end
 
   def get_players
-    x = 0
     players =[]
-    until x == players_per_game
-      x += 1
+    until players.length == players_per_game
       players.push(clients[pending_clients.shift])
     end
     players
   end
 
   def run_game(game)
-    ask_ready(game)
+    ready_up(game)
   end
 
-  def ask_ready(game)
-    game.players.each { |player| clients.key(player).puts("Are you ready to play?") }
+  def ready_up(game)
+    game.players.each do |player| 
+      clients.key(player).puts("Are you ready to play? Enter 'ready' if so.") 
+      capture_output(clients.key(player))
+    end
+  end
+
+  def capture_output(client, delay=0.1)
+    sleep(delay)
+    output = client.read_nonblock(1000) # not gets which blocks
+  rescue IO::WaitReadable
+    output = ""
   end
 
   def stop
