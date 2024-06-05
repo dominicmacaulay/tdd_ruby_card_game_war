@@ -1,24 +1,24 @@
+# frozen_string_literal: true
+
 require_relative 'playing_card'
+
+# This is the deck class
 class CardDeck
   attr_accessor :cards
 
-  RANKS = %w( 2 3 4 5 6 7 8 9 10 J Q K A )
-  SUITS = %w( S C H D)
+  RANKS = %w[2 3 4 5 6 7 8 9 10 J Q K A].freeze
+  SUITS = %w[S C H D].freeze
 
   def initialize(cards = make_deck)
-    if cards == "test"
-      @cards = make_test_deck
-    else
-      @cards = cards
-    end
+    @cards = cards == 'test' ? make_test_deck : cards
   end
 
   def make_test_deck
     x = 2
     cards = []
     until x > 8
-      cards.push(PlayingCard.new("#{x}", "H"))
-      cards.push(PlayingCard.new("#{x}", "S"))
+      cards.push(PlayingCard.new(x.to_s, 'H'))
+      cards.push(PlayingCard.new(x.to_s, 'S'))
       x += 1
     end
     cards
@@ -45,15 +45,20 @@ class CardDeck
   end
 
   def no_cards?
-    cards_left == 0
+    cards_left.zero?
   end
 
   def get_index(rank)
     RANKS.index(rank)
   end
 
-  def tie?(card1, card2)
-    card1.rank == card2.rank
+  def tie?(cards)
+    cards.each do |card|
+      cards.each do |other_card|
+        return true if other_card.rank == card.rank && other_card != card
+      end
+    end
+    false
   end
 
   def player1_wins?(card1, card2)

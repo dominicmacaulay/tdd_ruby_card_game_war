@@ -2,6 +2,8 @@
 
 require_relative 'war_player'
 require_relative 'card_deck'
+
+# manages and plays the game war
 class WarGame
   attr_reader :player1, :player2, :deck, :players
   attr_accessor :winner
@@ -26,7 +28,7 @@ class WarGame
     return if check_for_game_winner
 
     pile.push(*retrieve_cards)
-    return play_round(pile) if deck.tie?(pile[-2], pile[-1])
+    return play_round(pile) if deck.tie?(pile.last(players.length))
 
     match_winner = get_match_winner(pile)
     match_feedback(match_winner, pile)
@@ -55,9 +57,9 @@ class WarGame
   end
 
   def check_for_game_winner
-    if player1.hand_length == 0
+    if player1.hand_length.zero?
       self.winner = player2
-    elsif player2.hand_length == 0
+    elsif player2.hand_length.zero?
       self.winner = player1
     else
       false

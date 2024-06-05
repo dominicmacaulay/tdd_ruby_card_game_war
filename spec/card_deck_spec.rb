@@ -74,13 +74,13 @@ describe 'CardDeck' do # rubocop:disable Metrics/BlockLength
     let(:deck) { CardDeck.new }
     it 'returns true when both cards are the same rank' do
       card1 = PlayingCard.new('A', 'H')
-      card2 = PlayingCard.new('A', 'H')
-      expect(deck.tie?(card1,card2)).to be true
+      card2 = PlayingCard.new('A', 'S')
+      expect(deck.tie?([card1, card2])).to be true
     end
     it 'returns false when the cards are not the same rank' do
       card1 = PlayingCard.new('K', 'H')
       card2 = PlayingCard.new('A', 'H')
-      expect(deck.tie?(card1,card2)).to be false
+      expect(deck.tie?([card1, card2])).to be false
     end
   end
 
