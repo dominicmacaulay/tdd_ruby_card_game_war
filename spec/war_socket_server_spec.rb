@@ -17,7 +17,7 @@ class MockWarSocketClient
     sleep(delay)
     @output = @socket.read_nonblock(1000).chomp # not gets which blocks
   rescue IO::WaitReadable
-    @output = ""
+    @output = ''
   end
 
   def close
@@ -87,12 +87,14 @@ describe WarSocketServer do # rubocop:disable Metrics/BlockLength
       expect(@server.capture_output(@server.pending_clients.first)).to eq('ready')
     end
   end
-  # Add more tests to make sure the game is being played
-  # For example:
-  #   make sure the mock client gets appropriate output
-  #   make sure the next round isn't played until both clients say they are ready to play
-  #   ...
 
+  describe '#provide_input' do
+    it 'send the given client a message' do
+      client = create_client('P 1')
+      @server.provide_input(@server.pending_clients.first, 'Hello')
+      expect(client.capture_output).to eq('Hello')
+    end
+  end
   def create_client(name)
     client = MockWarSocketClient.new(@server.port_number)
     @clients.push(client)
