@@ -46,6 +46,10 @@ class WarSocketServer
     end
   end
 
+  def provide_input(client, message)
+    client.puts(message)
+  end
+
   def capture_output(client, delay = 0.1)
     sleep(delay)
     output = client.read_nonblock(1000).chomp.downcase # not gets which blocks
