@@ -1,11 +1,12 @@
 require_relative 'war_player'
 require_relative 'card_deck'
 class WarGame
-    attr_reader :player1, :player2, :deck
+    attr_reader :player1, :player2, :deck, :players
     attr_accessor :winner
     def initialize(player1 = Player.new("Player 1"), player2 = Player.new("Player 2"))
         @player1 = player1
         @player2 = player2
+        @players = [@player1, @player2]
         @deck = CardDeck.new
         @winner = nil
     end

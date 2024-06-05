@@ -30,7 +30,8 @@ class WarSocketServer
 
   def create_game_if_possible
     if self.pending_clients.length >= players_per_game
-      games.push(WarGame.new(*get_players))
+      players = get_players
+      games.push(WarGame.new(*players))
       return games[-1]
     end
     pending_clients.each { |client| client.puts("Waiting for other player(s) to join") }
@@ -40,12 +41,18 @@ class WarSocketServer
     x = 0
     players =[]
     until x == players_per_game
-      players.push(clients[pending_clients.shift])
       x += 1
+      players.push(clients[pending_clients.shift])
     end
+    players
   end
 
   def run_game(game)
+    ask_ready(game)
+  end
+
+  def ask_ready(game)
+    game.players.each { |player| clients.key(player).puts("Are you ready to play?") }
   end
 
   def stop

@@ -107,13 +107,13 @@ describe WarSocketServer do
   describe "#ask_ready" do
     it "sends the client a pending message when the other player(s) haven't agreed to play a round" do
       client1 = MockWarSocketClient.new(@server.port_number)
-      @server.accept_new_client("Player 1")
+      @server.accept_new_client("P 1")
       client2 = MockWarSocketClient.new(@server.port_number)
-      @server.accept_new_client("Player 2")
+      @server.accept_new_client("P 2")
       game = @server.create_game_if_possible
-      @server.run_game(game)
-      expect(client1.capture_output.chomp).to eq("Are you ready to begin?")
-      expect(client2.capture_output.chomp).to eq("Are you ready to begin?")
+      @server.ask_ready(game)
+      expect(client1.capture_output.chomp).to eq("Are you ready to play?")
+      expect(client2.capture_output.chomp).to eq("Are you ready to play?")
     end
   end
   # Add more tests to make sure the game is being played
