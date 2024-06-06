@@ -12,7 +12,7 @@ class WarSocketRunner
     @game = game
     @clients = clients
     @are_players_prompted = false
-    @pending_players = clients
+    @pending_players = clients.dup
   end
 
   def start
@@ -28,11 +28,12 @@ class WarSocketRunner
   def run_round_if_possible
     prompt_players if are_players_prompted == false
     return unless ready_up
-
+    
     match_result = game.play_round
+
     send_feedback(match_result)
     self.are_players_prompted = false
-    self.pending_players = clients
+    self.pending_players = clients.dup
   end
 
   private
@@ -48,13 +49,15 @@ class WarSocketRunner
 
   def prompt_players
     clients.each do |client|
-      send_message_to_client(client, "Are you ready to play? Enter 'ready' if so.")
+      send_message_to_client(client, "Are you ready to play? Enter 'ready' if so: ")
     end
     self.are_players_prompted = true
   end
 
   def confirm_ready(client)
-    return false unless retreive_message_from_player(client) == 'ready'
+    message = retreive_message_from_player(client)
+    
+    return false unless message == 'ready'
 
     send_message_to_client(client, 'Waiting for other players to ready')
     true

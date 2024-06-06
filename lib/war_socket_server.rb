@@ -27,13 +27,23 @@ class WarSocketServer
     puts "#{@server} started"
   end
 
-  def accept_new_client(player_name = 'Random Player')
+  def accept_new_client
     client = @server.accept_nonblock
-    pending_clients.push(client)
-    clients[client] = Player.new(player_name)
-    clients_not_greeted.push(client)
+    get_name_and_assign_client(client)
   rescue IO::WaitReadable, Errno::EINTR
-    puts 'No client to accept'
+    # puts 'No client to accept'
+  end
+
+  def get_name_and_assign_client(client)
+    pending_clients.push(client)
+    clients[client] = Player.new(name)
+    clients_not_greeted.push(client)
+  end
+
+  def retrieve_client_name(client)
+    client.puts('Enter your name: ')
+    name = nil
+    name = retrieve_client_response(client) until name.nil? == false
   end
 
   def create_game_if_possible
@@ -66,15 +76,11 @@ class WarSocketServer
     end
   end
 
-  def provide_input(client, message)
-    client.puts(message)
-  end
-
-  def capture_output(client, delay = 0.1)
+  def retrieve_client_response(client, delay = 0.1)
     sleep(delay)
-    client.read_nonblock(1000).chomp.downcase # not gets which blocks
+    client.read_nonblock(1000).chomp # not gets which blocks
   rescue IO::WaitReadable
-    ''
+    nil
   end
 
   def stop

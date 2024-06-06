@@ -4,6 +4,7 @@ require 'spec_helper'
 require_relative '../lib/war_socket_server'
 require_relative '../lib/war_game'
 require_relative '../lib/war_socket_runner'
+require_relative '../lib/client'
 
 class MockWarSocketClient
   attr_reader :socket, :output
@@ -30,7 +31,6 @@ end
 
 RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
   before(:each) do
-    @clients = []
     @server = WarSocketServer.new
     @server.start
     sleep(0.1)
@@ -42,7 +42,8 @@ RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
 
   after(:each) do
     @server.stop
-    @clients.each(&:close)
+    @client1.close
+    @client2.close
   end
 
   describe '#run_round_if_possible' do # rubocop:disable Metrics/BlockLength
@@ -83,8 +84,7 @@ RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
     end
   end
   def create_client(name)
-    client = MockWarSocketClient.new(@server.port_number)
-    @clients.push(client)
+    client = Client.new(@server.port_number)
     @server.accept_new_client(name)
     client
   end
