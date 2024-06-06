@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
 require_relative '../lib/war_socket_server'
 require_relative '../lib/war_game'
 require_relative '../lib/war_socket_runner'
@@ -27,7 +28,7 @@ class MockWarSocketClient
   end
 end
 
-describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
+RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
   before(:each) do
     @clients = []
     @server = WarSocketServer.new
@@ -44,61 +45,52 @@ describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
     @clients.each(&:close)
   end
 
-  it 'runs a round' do
-    @game.start
-    @runner.run_round_if_possible
-    expect(@client1.capture_output).to match 'Enter'
-    expect(@client2.capture_output).to match 'Enter'
-    @client1.provide_input('ready')
-    @client2.provide_input('ready')
-    @runner.run_round_if_possible
-    expect(@client1.capture_output).to match 'asdf'
-    # expect client1 to have round result
-    # expect(@runner.game.player1.hand.count).not_to
-  end
-
-  describe '#run_game' do
-    xit 'calls #ready_up' do
-      expect(@runner).to receive(:ready_up)
-      @runner.run_game
+  describe '#run_round_if_possible' do # rubocop:disable Metrics/BlockLength
+    before do
+      @game.start
+    end
+    it 'puts appropriate prompt messages for each player' do
+      @runner.run_round_if_possible
+      expect(@client1.capture_output).to match 'Enter'
+      expect(@client2.capture_output).to match 'Enter'
+    end
+    it 'puts prompt only if the players have not yet been prompted' do
+      @runner.are_players_prompted = true
+      @runner.run_round_if_possible
+      expect(@client1.capture_output).not_to match 'Enter'
+      expect(@client2.capture_output).not_to match 'Enter'
+    end
+    it 'puts appropriate waiting message for each player' do
+      @client1.provide_input('ready')
+      @client2.provide_input('ready')
+      @runner.run_round_if_possible
+      expect(@client1.capture_output).to match 'Waiting'
+      expect(@client2.capture_output).to match 'Waiting'
+    end
+    it 'puts match results' do
+      @client1.provide_input('ready')
+      @client2.provide_input('ready')
+      @runner.run_round_if_possible
+      expect(@client1.capture_output).to match 'took'
+      expect(@client2.capture_output).to match 'took'
+    end
+    it 'changes variables back to their original states' do
+      @client1.provide_input('ready')
+      @client2.provide_input('ready')
+      @runner.run_round_if_possible
+      expect(@runner.are_players_prompted).to be false
+      expect(@runner).to receive(:store_pending_players).once
     end
   end
 
   describe '#ready_up' do
-    it 'calls the confirm_ready method until all players say yes' do
-      allow(@runner).to receive(:prompt_to_ready_and_store_players).and_return(@runner.clients.keys)
-      allow(@runner).to receive(:confirm_ready).and_return(false, false, true, true)
-      expect(@runner).to receive(:confirm_ready).at_least(@clients.length * 2).times
-      @runner.ready_up
+    it 'returns false when not all of the players have said ready' do
+      expect(@runner.ready_up).to be false
     end
-  end
-
-  describe '#prompt_to_ready_and_store_players' do
-    it 'Ask each player if they are ready' do
-      @runner.prompt_to_ready_and_store_players
-      expect(@client1.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
-      expect(@client2.capture_output.chomp).to eq("Are you ready to play? Enter 'ready' if so.")
-    end
-  end
-
-  describe '#confirm_ready' do
-    it 'returns true and give pending message when the client sends ready' do
-      client = @runner.clients.keys.first
+    fit 'returns true when all players have said ready' do
       @client1.provide_input('ready')
-      confirmation = @runner.confirm_ready(client)
-      expect(confirmation).to be true
-      expect(@client1.capture_output).to eq('Waiting for other players to ready')
-    end
-    it 'returns false if the client does not send ready' do
-      client = @runner.clients.keys.first
-      @client1.provide_input('nah')
-      confirmation = @runner.confirm_ready(client)
-      expect(confirmation).to be false
-    end
-    it 'returns false if the client does not send anything' do
-      client = @runner.clients.keys.first
-      confirmation = @runner.confirm_ready(client)
-      expect(confirmation).to be false
+      @client2.provide_input('ready')
+      expect(@runner.ready_up).to be true
     end
   end
   def create_client(name)

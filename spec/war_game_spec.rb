@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
 require_relative '../lib/war_game'
 require_relative '../lib/card_deck'
 

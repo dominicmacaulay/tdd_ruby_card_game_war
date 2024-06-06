@@ -20,14 +20,12 @@ class WarSocketRunner
   end
 
   def run_game
-    until game.winner
-      prompt_players if are_players_prompted == false
-      run_round_if_possible
-    end
+    run_round_if_possible until game.winner
     send_feedback("Winner is #{game.winner.name}")
   end
 
   def run_round_if_possible
+    prompt_players if are_players_prompted == false
     return unless ready_up
 
     match_result = game.play_round
@@ -35,6 +33,8 @@ class WarSocketRunner
     self.are_players_prompted = false
     self.pending_players = store_pending_players
   end
+
+  private
 
   def send_feedback(message)
     clients.each { |client| send_message_to_client(client.first, message) }
