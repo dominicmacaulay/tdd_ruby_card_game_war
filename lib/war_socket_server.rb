@@ -8,7 +8,7 @@ require_relative 'war_socket_runner'
 # runs interactions between the clients and the server
 class WarSocketServer
   attr_accessor :games, :pending_clients, :clients, :clients_not_greeted
-  attr_reader :players_per_game
+  attr_reader :players_per_game, :server
 
   def initialize(players_per_game = 2)
     @players_per_game = players_per_game

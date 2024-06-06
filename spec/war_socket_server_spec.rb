@@ -83,6 +83,8 @@ RSpec.describe WarSocketServer do # rubocop:disable Metrics/BlockLength
       client1.capture_output
       @server.create_game_if_possible
       expect(client1.capture_output.chomp).to eq('Waiting for other player(s) to join')
+      @server.create_game_if_possible
+      expect(client1.capture_output).to eq ''
     end
 
     it 'adds the client to the ungreeted array and removes them once they have been greeted' do
@@ -93,6 +95,26 @@ RSpec.describe WarSocketServer do # rubocop:disable Metrics/BlockLength
     end
   end
 
+  describe '#get_name_and_assign_client' do
+    before do
+      @mock_client = MockWarSocketClient.new(@server.port_number)
+      @clients.push(@mock_client)
+      @server_client = @server.server.accept_nonblock
+      @server.get_name_and_assign_client(@server_client, nil)
+    end
+
+    it 'exits if no name is given or retrieved' do
+      expect(@server.pending_clients).not_to include(@server_client)
+    end
+    it 'adds the client to the lists if name is given' do
+      @mock_client.provide_input('Jack')
+      @server.get_name_and_assign_client(@server_client, nil)
+      expect(@server.pending_clients).to include(@server_client)
+      expect(@server.clients).to include(@server_client)
+      expect(@server.clients_not_greeted).to include(@server_client)
+    end
+  end
+
   describe '#capture_output' do
     it "receives the client's input" do
       client1 = create_client('P 1')
@@ -100,7 +122,7 @@ RSpec.describe WarSocketServer do # rubocop:disable Metrics/BlockLength
       expect(@server.retrieve_client_response(@server.pending_clients.first)).to eq('ready')
     end
   end
-  def create_client(name)
+  def create_client(name = nil)
     client = MockWarSocketClient.new(@server.port_number)
     @clients.push(client)
     @server.accept_new_client(name)
