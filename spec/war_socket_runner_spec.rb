@@ -37,7 +37,7 @@ RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
     @client1 = create_client('P 1')
     @client2 = create_client('P 2')
     @game = @server.create_game_if_possible
-    @runner = WarSocketRunner.new(@game, @server.clients)
+    @runner = @server.create_runner(@game)
   end
 
   after(:each) do
@@ -75,17 +75,11 @@ RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
       expect(@client2.capture_output).to match 'took'
     end
     it 'changes variables back to their original states' do
-      players = store_pending_players
       @client1.provide_input('ready')
       @client2.provide_input('ready')
       @runner.run_round_if_possible
       expect(@runner.are_players_prompted).to be false
-      expect(@runner.pending_players).to eq(players)
-    end
-  end
-  def store_pending_players
-    @game.players.map do |player|
-      @runner.clients.key(player)
+      expect(@runner.pending_players).to eq(@runner.clients)
     end
   end
   def create_client(name)

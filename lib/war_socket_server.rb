@@ -3,16 +3,18 @@
 require 'socket'
 require_relative 'war_player'
 require_relative 'war_game'
+require_relative 'war_socket_runner'
 
 # runs interactions between the clients and the server
 class WarSocketServer
-  attr_accessor :games, :pending_clients, :clients
+  attr_accessor :games, :pending_clients, :clients, :clients_not_greeted
   attr_reader :players_per_game
 
   def initialize(players_per_game = 2)
     @players_per_game = players_per_game
     @games = []
     @pending_clients = []
+    @clients_not_greeted = []
     @clients = {}
   end
 
@@ -29,6 +31,7 @@ class WarSocketServer
     client = @server.accept_nonblock
     pending_clients.push(client)
     clients[client] = Player.new(player_name)
+    clients_not_greeted.push(client)
   rescue IO::WaitReadable, Errno::EINTR
     puts 'No client to accept'
   end
@@ -39,7 +42,12 @@ class WarSocketServer
       games.push(WarGame.new(*players))
       return games.last
     end
-    pending_clients.each { |client| client.puts('Waiting for other player(s) to join') }
+    greet_clients
+  end
+
+  def greet_clients
+    clients_not_greeted.each { |client| client.puts('Waiting for other player(s) to join') }
+    clients_not_greeted.clear
     nil
   end
 
@@ -48,8 +56,8 @@ class WarSocketServer
   end
 
   def create_runner(game)
-    clients = game.players.map { |player| clients.key(player) }
-    WarSocketRunner.new(game, clients)
+    players = game.players.map { |player| clients.key(player) }
+    WarSocketRunner.new(game, players)
   end
 
   def retrieve_players

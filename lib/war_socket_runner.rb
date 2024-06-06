@@ -12,7 +12,7 @@ class WarSocketRunner
     @game = game
     @clients = clients
     @are_players_prompted = false
-    @pending_players = store_pending_players
+    @pending_players = clients
   end
 
   def start
@@ -32,13 +32,13 @@ class WarSocketRunner
     match_result = game.play_round
     send_feedback(match_result)
     self.are_players_prompted = false
-    self.pending_players = store_pending_players
+    self.pending_players = clients
   end
 
   private
 
   def send_feedback(message)
-    clients.each { |client| send_message_to_client(client.first, message) }
+    clients.each { |client| send_message_to_client(client, message) }
   end
 
   def ready_up
@@ -46,15 +46,9 @@ class WarSocketRunner
     pending_players.empty?
   end
 
-  def store_pending_players
-    game.players.map do |player|
-      clients.key(player)
-    end
-  end
-
   def prompt_players
-    game.players.each do |player|
-      send_message_to_client(clients.key(player), "Are you ready to play? Enter 'ready' if so.")
+    clients.each do |client|
+      send_message_to_client(client, "Are you ready to play? Enter 'ready' if so.")
     end
     self.are_players_prompted = true
   end

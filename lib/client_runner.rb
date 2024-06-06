@@ -4,6 +4,9 @@ require_relative 'client'
 
 # lib/client_runner.rb
 
+# puts 'enter your name'
+# name = gets.chomp
+
 client = Client.new(3336)
 while true do
   output = ""
