@@ -28,7 +28,7 @@ class MockWarSocketClient
   end
 end
 
-describe WarSocketServer do # rubocop:disable Metrics/BlockLength
+RSpec.describe WarSocketServer do # rubocop:disable Metrics/BlockLength
   before(:each) do
     @clients = []
     @server = WarSocketServer.new
@@ -53,6 +53,10 @@ describe WarSocketServer do # rubocop:disable Metrics/BlockLength
       expect(@server.pending_clients.length).to be @clients.length
       expect(@server.clients.length).to be @clients.length
     end
+    it 'prompts the clients to give their name' do
+      client1 = create_client('P1')
+      expect(client1.capture_output).to match 'name'
+    end
   end
 
   describe '#create_game_if_possible' do
@@ -76,26 +80,24 @@ describe WarSocketServer do # rubocop:disable Metrics/BlockLength
 
     it 'sends the client a pending message when there are not enough players yet' do
       client1 = create_client('Player 1')
+      client1.capture_output
       @server.create_game_if_possible
       expect(client1.capture_output.chomp).to eq('Waiting for other player(s) to join')
+    end
+
+    it 'adds the client to the ungreeted array and removes them once they have been greeted' do
+      create_client('Player 1')
+      expect(@server.clients_not_greeted.length).to eql 1
+      @server.create_game_if_possible
+      expect(@server.clients_not_greeted.empty?).to be true
     end
   end
 
   describe '#capture_output' do
-    it "receives the downcased client's input" do
+    it "receives the client's input" do
       client1 = create_client('P 1')
-      client1.provide_input('Hello')
-      expect(@server.capture_output(@server.pending_clients.first)).to eq('hello')
-      client1.provide_input('reaDy')
-      expect(@server.capture_output(@server.pending_clients.first)).to eq('ready')
-    end
-  end
-
-  describe '#provide_input' do
-    it 'send the given client a message' do
-      client = create_client('P 1')
-      @server.provide_input(@server.pending_clients.first, 'Hello')
-      expect(client.capture_output).to eq('Hello')
+      client1.provide_input('ready')
+      expect(@server.retrieve_client_response(@server.pending_clients.first)).to eq('ready')
     end
   end
   def create_client(name)

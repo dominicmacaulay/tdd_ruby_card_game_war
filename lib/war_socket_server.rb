@@ -27,23 +27,25 @@ class WarSocketServer
     puts "#{@server} started"
   end
 
-  def accept_new_client
+  def accept_new_client(name = nil)
     client = @server.accept_nonblock
-    get_name_and_assign_client(client)
+    client.puts('Enter your name: ')
+    get_name_and_assign_client(client, name) until clients.include?(client)
   rescue IO::WaitReadable, Errno::EINTR
     # puts 'No client to accept'
   end
 
-  def get_name_and_assign_client(client)
+  def get_name_and_assign_client(client, test_name)
+    name = retrieve_client_name(client)
+    return if test_name.nil? && name.nil?
+
     pending_clients.push(client)
     clients[client] = Player.new(name)
     clients_not_greeted.push(client)
   end
 
   def retrieve_client_name(client)
-    client.puts('Enter your name: ')
-    name = nil
-    name = retrieve_client_response(client) until name.nil? == false
+    retrieve_client_response(client)
   end
 
   def create_game_if_possible
