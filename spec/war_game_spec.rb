@@ -113,7 +113,7 @@ RSpec.describe WarGame do # rubocop:disable Metrics/BlockLength
 
   describe '#check_for_game_winner' do
     let(:game) { WarGame.new }
-    fit 'should make the winner player1 when player 1 wins' do
+    it 'should make the winner player1 when player 1 wins' do
       card1 = PlayingCard.new('A', 'S', game.players.first)
       card2 = PlayingCard.new('A', 'H', game.players.first)
       game.players.first.add_cards([card1, card2])

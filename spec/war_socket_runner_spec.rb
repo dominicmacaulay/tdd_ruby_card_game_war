@@ -52,14 +52,14 @@ RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
     end
     it 'puts appropriate prompt messages for each player' do
       @runner.run_round_if_possible
-      expect(@client1.capture_output).to match 'Enter'
-      expect(@client2.capture_output).to match 'Enter'
+      expect(@client1.capture_output).to match 'ready'
+      expect(@client2.capture_output).to match 'ready'
     end
     it 'puts prompt only if the players have not yet been prompted' do
       @runner.are_players_prompted = true
       @runner.run_round_if_possible
-      expect(@client1.capture_output).not_to match 'Enter'
-      expect(@client2.capture_output).not_to match 'Enter'
+      expect(@client1.capture_output).not_to match 'ready'
+      expect(@client2.capture_output).not_to match 'ready'
     end
     it 'puts appropriate waiting message for each player' do
       @client1.provide_input('ready')

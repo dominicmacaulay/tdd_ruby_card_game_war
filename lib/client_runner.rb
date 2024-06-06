@@ -4,16 +4,19 @@ require_relative 'client'
 
 # lib/client_runner.rb
 
-# puts 'enter your name'
-# name = gets.chomp
+puts 'enter your server number: '
+server = gets.chomp
+if server.length >= 4
+  server = server.to_i
+else
+  server = nil
+end
 
-client = Client.new(3336)
-while true do
-  output = ""
-  until output != ""
-    output = client.capture_output
-  end
-  if output.include?(":")
+client = Client.new(server)
+loop do
+  output = ''
+  output = client.capture_output until output != ''
+  if output.include?(':')
     print output
     client.provide_input(gets.chomp)
   else

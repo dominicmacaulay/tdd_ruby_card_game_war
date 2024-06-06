@@ -8,18 +8,15 @@ require_relative 'war_socket_runner'
 # runs interactions between the clients and the server
 class WarSocketServer
   attr_accessor :games, :pending_clients, :clients, :clients_not_greeted
-  attr_reader :players_per_game, :server
+  attr_reader :players_per_game, :server, :port_number
 
-  def initialize(players_per_game = 2)
+  def initialize(players_per_game = 2, port_number = 3336)
     @players_per_game = players_per_game
     @games = []
     @pending_clients = []
     @clients_not_greeted = []
     @clients = {}
-  end
-
-  def port_number
-    3336
+    @port_number = port_number
   end
 
   def start
@@ -51,7 +48,7 @@ class WarSocketServer
   def create_game_if_possible
     if pending_clients.length >= players_per_game
       players = retrieve_players
-      games.push(WarGame.new(*players))
+      games.push(WarGame.new(players))
       return games.last
     end
     greet_clients
