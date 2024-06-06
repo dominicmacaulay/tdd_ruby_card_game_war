@@ -48,7 +48,7 @@ class WarGame
     # match_winner
     winning_card = deck.winning_card(pile.last(players.length))
     pile.each { |card| card.change_player(winning_card.player) }
-    winning_card.player.push(pile)
+    winning_card.player.add_cards(pile)
     winning_card.player
   end
 
