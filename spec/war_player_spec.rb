@@ -4,7 +4,7 @@ require 'spec_helper'
 require_relative '../lib/war_player'
 
 # test the warplayer class
-describe 'WarPlayer' do # rubocop:disable Metrics/BlockLength
+RSpec.describe Player do # rubocop:disable Metrics/BlockLength
   it 'should create a passed in name' do
     player = Player.new('Player 1')
     expect(player.name).to eql('Player 1')

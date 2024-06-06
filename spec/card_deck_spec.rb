@@ -5,7 +5,7 @@ require_relative '../lib/card_deck'
 require_relative '../lib/playing_card'
 
 # tests the CardDeck class
-describe 'CardDeck' do # rubocop:disable Metrics/BlockLength
+RSpec.describe CardDeck do # rubocop:disable Metrics/BlockLength
   it 'Should have 52 cards when created' do
     deck = CardDeck.new
     expect(deck.cards_left).to eq 52

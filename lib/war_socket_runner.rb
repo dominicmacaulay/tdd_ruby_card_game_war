@@ -28,9 +28,8 @@ class WarSocketRunner
   def run_round_if_possible
     prompt_players if are_players_prompted == false
     return unless ready_up
-    
-    match_result = game.play_round
 
+    match_result = game.play_round
     send_feedback(match_result)
     self.are_players_prompted = false
     self.pending_players = clients.dup
@@ -56,7 +55,6 @@ class WarSocketRunner
 
   def confirm_ready(client)
     message = retreive_message_from_player(client)
-    
     return false unless message == 'ready'
 
     send_message_to_client(client, 'Waiting for other players to ready')

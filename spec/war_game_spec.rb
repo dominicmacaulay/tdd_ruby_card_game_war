@@ -5,7 +5,7 @@ require_relative '../lib/war_game'
 require_relative '../lib/card_deck'
 
 # test the WarGame method
-describe 'WarGame' do # rubocop:disable Metrics/BlockLength
+RSpec.describe WarGame do # rubocop:disable Metrics/BlockLength
   describe '#initialize' do
     let(:game) { WarGame.new }
     it 'should create two players' do

@@ -14,11 +14,10 @@ class CardDeck
   end
 
   def make_test_deck
-    x = 2
     cards = []
     until x > 8
-      cards.push(PlayingCard.new(x.to_s, 'H'))
-      cards.push(PlayingCard.new(x.to_s, 'S'))
+      cards.push(PlayingCard.new((x + 1).to_s, 'H'))
+      cards.push(PlayingCard.new((x + 1).to_s, 'S'))
       x += 1
     end
     cards
