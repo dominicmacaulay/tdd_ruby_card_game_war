@@ -60,11 +60,10 @@ class WarGame
   end
 
   def check_for_game_winner
-    num_of_losers = players.count { |player| player.hand_length.zero? }
-    return unless num_of_losers == players.count - 1
+    players.delete_if { |player| player.hand_length.zero? }
+    # num_of_losers = players.count { |player| player.hand_length.zero? }
+    return unless players.count == 1
 
-    winner = nil
-    players.each { |player| winner = player if player.hand_length.positive? }
-    self.winner = winner
+    self.winner = players.first
   end
 end
