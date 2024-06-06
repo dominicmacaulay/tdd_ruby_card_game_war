@@ -40,6 +40,9 @@ class WarGame
     # match_winner.add_cards(pile)
     # match_winner
     winning_card = deck.winning_card(pile.last(players.length))
+    pile.each { |card| card.player = winning_card.player }
+    winning_card.player.push(pile)
+    winning_card.player
   end
 
   def retrieve_cards
