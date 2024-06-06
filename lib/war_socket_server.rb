@@ -22,6 +22,7 @@ class WarSocketServer
 
   def start
     @server = TCPServer.new(port_number)
+    puts "#{@server} started"
   end
 
   def accept_new_client(player_name = 'Random Player')
@@ -39,6 +40,7 @@ class WarSocketServer
       return games.last
     end
     pending_clients.each { |client| client.puts('Waiting for other player(s) to join') }
+    nil
   end
 
   def run_game(game)
