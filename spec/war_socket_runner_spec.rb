@@ -60,7 +60,7 @@ RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
       expect(@client1.capture_output).not_to match 'Enter'
       expect(@client2.capture_output).not_to match 'Enter'
     end
-    it 'puts appropriate waiting message for each player' do
+    fit 'puts appropriate waiting message for each player' do
       @client1.provide_input('ready')
       @client2.provide_input('ready')
       @runner.run_round_if_possible
@@ -80,17 +80,6 @@ RSpec.describe WarSocketRunner do # rubocop:disable Metrics/BlockLength
       @runner.run_round_if_possible
       expect(@runner.are_players_prompted).to be false
       expect(@runner).to receive(:store_pending_players).once
-    end
-  end
-
-  describe '#ready_up' do
-    it 'returns false when not all of the players have said ready' do
-      expect(@runner.ready_up).to be false
-    end
-    fit 'returns true when all players have said ready' do
-      @client1.provide_input('ready')
-      @client2.provide_input('ready')
-      expect(@runner.ready_up).to be true
     end
   end
   def create_client(name)

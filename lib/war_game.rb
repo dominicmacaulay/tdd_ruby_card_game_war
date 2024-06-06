@@ -43,9 +43,10 @@ class WarGame
   end
 
   def retrieve_cards
-    card1 = player1.remove_top_card
-    card2 = player2.remove_top_card
-    [card1, card2]
+    # card1 = player1.remove_top_card
+    # card2 = player2.remove_top_card
+    # [card1, card2]
+    players.map(&:remove_top_card)
   end
 
   def match_feedback(player, cards)

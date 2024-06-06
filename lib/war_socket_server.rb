@@ -41,6 +41,15 @@ class WarSocketServer
     pending_clients.each { |client| client.puts('Waiting for other player(s) to join') }
   end
 
+  def run_game(game)
+    create_runner(game).start
+  end
+
+  def create_runner(game)
+    clients = game.players.map { |player| clients.key(player) }
+    WarSocketRunner.new(game, clients)
+  end
+
   def retrieve_players
     players_per_game.times.map do
       clients[pending_clients.shift]

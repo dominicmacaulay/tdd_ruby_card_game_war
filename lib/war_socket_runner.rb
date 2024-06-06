@@ -16,6 +16,7 @@ class WarSocketRunner
   end
 
   def start
+    game.start
     run_game
   end
 
@@ -41,18 +42,14 @@ class WarSocketRunner
   end
 
   def ready_up
-    pending_players.each do |client|
-      pending_players.delete(client) if confirm_ready(client)
-    end
+    pending_players.delete_if { |client| confirm_ready(client) }
     pending_players.empty?
   end
 
   def store_pending_players
-    players = []
-    game.players.each do |player|
-      players.push(clients.key(player))
+    game.players.map do |player|
+      clients.key(player)
     end
-    players
   end
 
   def prompt_players
