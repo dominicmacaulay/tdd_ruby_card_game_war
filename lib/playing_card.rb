@@ -1,11 +1,21 @@
-class PlayingCard
-    attr_reader :rank, :suit
-    def initialize(rank, suit)
-        @rank = rank
-        @suit = suit
-    end
+# frozen_string_literal: true
 
-    def ==(other_card)
-        other_card.rank == rank && other_card.suit == suit
-    end
-end 
+# playing card object
+class PlayingCard
+  attr_reader :rank, :suit
+  attr_accessor :player
+
+  def initialize(rank, suit, player = nil)
+    @rank = rank
+    @suit = suit
+    @player = player
+  end
+
+  def change_player(player)
+    self.player = player
+  end
+
+  def ==(other)
+    other.rank == rank && other.suit == suit
+  end
+end

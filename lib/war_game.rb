@@ -19,8 +19,9 @@ class WarGame
   def start
     deck.shuffle
     until deck.no_cards?
-      player1.add_cards([deck.deal])
-      player2.add_cards([deck.deal])
+      # player1.add_cards([deck.deal])
+      # player2.add_cards([deck.deal])
+      players.each { |player| deal_card_to_player(player) }
     end
   end
 
@@ -34,13 +35,19 @@ class WarGame
     match_feedback(match_winner, pile)
   end
 
+  def deal_card_to_player(player)
+    card = deck.deal
+    card.change_player(player)
+    player.add_cards([card])
+  end
+
   # TODO: rewrite to get the card's player
   def get_match_winner(pile)
     # match_winner = deck.winning_card(pile[-2], pile[-1]) ? player1 : player2
     # match_winner.add_cards(pile)
     # match_winner
     winning_card = deck.winning_card(pile.last(players.length))
-    pile.each { |card| card.player = winning_card.player }
+    pile.each { |card| card.change_player(winning_card.player) }
     winning_card.player.push(pile)
     winning_card.player
   end
