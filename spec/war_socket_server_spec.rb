@@ -6,10 +6,11 @@ require_relative '../lib/war_socket_server'
 require_relative '../lib/war_game'
 
 class MockWarSocketClient
-  attr_reader :socket, :output
+  attr_reader :socket, :output, :name
 
-  def initialize(port)
+  def initialize(port, name = 'Random Player')
     @socket = TCPSocket.new('localhost', port)
+    @name = name
   end
 
   def provide_input(text)
@@ -59,7 +60,7 @@ RSpec.describe WarSocketServer do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  describe '#create_game_if_possible' do
+  describe '#create_game_if_possible' do # rubocop:disable Metrics/BlockLength
     it 'starts a game only if there are enough players' do
       create_client('Player 1')
       @server.create_game_if_possible

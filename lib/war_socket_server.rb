@@ -7,7 +7,7 @@ require_relative 'war_socket_runner'
 
 # runs interactions between the clients and the server
 class WarSocketServer
-  attr_accessor :games, :pending_clients, :clients, :clients_not_greeted
+  attr_accessor :games, :pending_clients, :clients, :clients_not_greeted, :can_send_no_clients_message
   attr_reader :players_per_game, :server, :port_number
 
   def initialize(players_per_game = 2, port_number = 3336)
@@ -17,6 +17,7 @@ class WarSocketServer
     @clients_not_greeted = []
     @clients = {}
     @port_number = port_number
+    @can_send_no_clients_message = true
   end
 
   def start
@@ -28,16 +29,28 @@ class WarSocketServer
     client = @server.accept_nonblock
     client.puts('Enter your name: ')
     get_name_and_assign_client(client, name) until clients.include?(client)
+    self.can_send_no_clients_message = true
   rescue IO::WaitReadable, Errno::EINTR
-    # puts 'No client to accept'
+    send_no_clients_message
+  end
+
+  def send_no_clients_message
+    return unless can_send_no_clients_message == true
+
+    puts 'No client to accept'
+    self.can_send_no_clients_message = false
   end
 
   def get_name_and_assign_client(client, test_name)
     name = retrieve_client_name(client)
     return if test_name.nil? && name.nil?
 
-    pending_clients.push(client)
+    create_clients(client)
     clients[client] = Player.new(name)
+  end
+
+  def create_clients(client)
+    pending_clients.push(client)
     clients_not_greeted.push(client)
   end
 
